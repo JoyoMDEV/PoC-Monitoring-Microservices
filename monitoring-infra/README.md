@@ -15,7 +15,7 @@ Deployt werden mit Terraform die Services **Prometheus**, **Jaeger**, **Loki** s
 
 ## Projektstruktur
 
-```
+```bash
 /monitoring-infra/
   ├── main.tf               # Haupt-Terraform-Konfiguration
   ├── outputs.tf            # (optional) Ausgaben, z. B. Service-URLs
@@ -48,6 +48,7 @@ terraform init
 ```bash
 terraform apply
 ```
+
 Bestätige mit `yes`, wenn du dazu aufgefordert wirst.
 
 ---
@@ -56,16 +57,20 @@ Bestätige mit `yes`, wenn du dazu aufgefordert wirst.
 
 - Deine Microservices (z. B. `product`) sollten im gleichen Docker-Netzwerk laufen wie die Monitoring-Services.
 - Im Docker-Compose-File der Microservices:
+
   ```yaml
   networks:
     monitoring:
       external: true
   ```
+
   und für jeden Service:
+
   ```yaml
   networks:
     - monitoring
   ```
+
 - In der `prometheus.yml` können die Ziel-Services (z. B. `product:8000`) direkt angegeben werden.
 
 ---
@@ -74,19 +79,21 @@ Bestätige mit `yes`, wenn du dazu aufgefordert wirst.
 
 | Dienst      | URL                        | Beschreibung                    |
 |-------------|----------------------------|----------------------------------|
-| Prometheus  | http://localhost:9090      | Monitoring-Oberfläche           |
-| Loki        | http://localhost:3100      | API für Log-Sammlung            |
-| Jaeger      | http://localhost:16686     | Tracing-Oberfläche              |
-| Grafana     | http://localhost:3000      | (optional) Visualisierung       |
+| Prometheus  | <http://localhost:9090>      | Monitoring-Oberfläche           |
+| Loki        | <http://localhost:3100>      | API für Log-Sammlung            |
+| Jaeger      | <http://localhost:16686>     | Tracing-Oberfläche              |
+| Grafana     | <http://localhost:3000>      | (optional) Visualisierung       |
 
 ---
 
 ## Abschalten
 
 Alle mit Terraform gestarteten Container können mit
+
 ```bash
 terraform destroy
 ```
+
 beendet und gelöscht werden.
 
 ---
