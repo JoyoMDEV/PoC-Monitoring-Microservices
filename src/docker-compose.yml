@@ -1,0 +1,69 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${PRODUCT_DB} # Wird nur beim ersten Start erzeugt, weitere per Init-Skript
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d # Siehe unten für mehrere DBs
+
+  product:
+    build: ./product
+    container_name: product
+    depends_on:
+      - mariadb
+    ports:
+      - "8001:8000"
+    environment:
+      DB_HOST: mariadb
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${PRODUCT_DB}
+    networks:
+      - monitoring
+
+  order:
+    build: ./order
+    container_name: order
+    depends_on:
+      - mariadb
+    ports:
+      - "8002:8000"
+    environment:
+      DB_HOST: mariadb
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${ORDER_DB}
+    networks:
+      - monitoring
+
+  payment:
+    build: ./payment
+    container_name: payment
+    depends_on:
+      - mariadb
+    ports:
+      - "8003:8000"
+    environment:
+      DB_HOST: mariadb
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${PAYMENT_DB}
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    external: true # Von Terraform erzeugt, für Monitoring/Tracing
+
+volumes:
+  mariadb_data:

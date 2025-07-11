@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'product'
+    static_configs:
+      - targets: ['product:8000']
