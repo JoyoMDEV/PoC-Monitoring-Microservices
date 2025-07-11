@@ -5,8 +5,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from database import SessionLocal, engine
-from models import Base, Product
-from schemas import ProductCreate, ProductRead
+from models import Base, Order
+from schemas import OrderCreate, OrderRead
 
 import structlog
 import sys
@@ -39,37 +39,39 @@ def get_db():
 @app.get("/")
 def read_root():
     logger.info("root called")
-    return {"message": "Product Service online"}
+    return {"message": "Order Service online"}
 
-@app.post("/products", response_model=ProductRead)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+@app.post("/orders", response_model=OrderRead)
+def create_order(order: OrderCreate, db: Session = Depends(get_db)):
     try:
-        db_product = Product(name=product.name, price=product.price)
-        db.add(db_product)
+        db_order = Order(
+            product_id=order.product_id,
+            quantity=order.quantity,
+            total_price=order.total_price
+        )
+        db.add(db_order)
         db.commit()
-        db.refresh(db_product)
-        logger.info("product_created", name=product.name, price=product.price)
-        return db_product
+        db.refresh(db_order)
+        logger.info("order_created", product_id=order.product_id, quantity=order.quantity, total_price=order.total_price)
+        return db_order
     except SQLAlchemyError as e:
-        logger.error("db_error", error=str(e))
+        logger.error("db_error_create_order", error=str(e))
         raise HTTPException(status_code=500, detail="Database error")
 
-from sqlalchemy.exc import SQLAlchemyError
-
-@app.get("/products/{product_id}", response_model=ProductRead)
-def get_product(product_id: int, db: Session = Depends(get_db)):
+@app.get("/orders/{order_id}", response_model=OrderRead)
+def get_order(order_id: int, db: Session = Depends(get_db)):
     try:
-        product = db.query(Product).filter(Product.id == product_id).first()
-        if not product:
-            logger.warning("product_not_found", product_id=product_id)
-            raise HTTPException(status_code=404, detail="Product not found")
-        logger.info("product_retrieved", product_id=product_id)
-        return product
+        order = db.query(Order).filter(Order.id == order_id).first()
+        if not order:
+            logger.warning("order_not_found", order_id=order_id)
+            raise HTTPException(status_code=404, detail="Order not found")
+        logger.info("order_retrieved", order_id=order_id)
+        return order
     except SQLAlchemyError as e:
-        logger.error("db_error_get_product", error=str(e), product_id=product_id)
+        logger.error("db_error_get_order", error=str(e), order_id=order_id)
         raise HTTPException(status_code=500, detail="Database error")
     except Exception as e:
-        logger.error("unknown_error_get_product", error=str(e), product_id=product_id)
+        logger.error("unknown_error_get_order", error=str(e), order_id=order_id)
         raise HTTPException(status_code=500, detail="Unknown server error")
 
 @app.get("/health", status_code=status.HTTP_200_OK)
@@ -81,6 +83,7 @@ def healthcheck(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error("healthcheck_failed", error=str(e))
         raise HTTPException(status_code=503, detail="Service unhealthy")
+
 
 # Prometheus Metrics
 Instrumentator().instrument(app).expose(app)
@@ -94,7 +97,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 def setup_tracing():
-    provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "product-service"}))
+    provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "order-service"}))
     trace.set_tracer_provider(provider)
     jaeger_exporter = JaegerExporter(
         agent_host_name="jaeger",

@@ -5,8 +5,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from database import SessionLocal, engine
-from models import Base, Product
-from schemas import ProductCreate, ProductRead
+from models import Base, Payment
+from schemas import PaymentCreate, PaymentRead
 
 import structlog
 import sys
@@ -39,37 +39,39 @@ def get_db():
 @app.get("/")
 def read_root():
     logger.info("root called")
-    return {"message": "Product Service online"}
+    return {"message": "Payment Service online"}
 
-@app.post("/products", response_model=ProductRead)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+@app.post("/payments", response_model=PaymentRead)
+def create_payment(payment: PaymentCreate, db: Session = Depends(get_db)):
     try:
-        db_product = Product(name=product.name, price=product.price)
-        db.add(db_product)
+        db_payment = Payment(
+            order_id=payment.order_id,
+            amount=payment.amount,
+            method=payment.method
+        )
+        db.add(db_payment)
         db.commit()
-        db.refresh(db_product)
-        logger.info("product_created", name=product.name, price=product.price)
-        return db_product
+        db.refresh(db_payment)
+        logger.info("payment_created", order_id=payment.order_id, amount=payment.amount, method=payment.method)
+        return db_payment
     except SQLAlchemyError as e:
-        logger.error("db_error", error=str(e))
+        logger.error("db_error_create_payment", error=str(e))
         raise HTTPException(status_code=500, detail="Database error")
 
-from sqlalchemy.exc import SQLAlchemyError
-
-@app.get("/products/{product_id}", response_model=ProductRead)
-def get_product(product_id: int, db: Session = Depends(get_db)):
+@app.get("/payments/{payment_id}", response_model=PaymentRead)
+def get_payment(payment_id: int, db: Session = Depends(get_db)):
     try:
-        product = db.query(Product).filter(Product.id == product_id).first()
-        if not product:
-            logger.warning("product_not_found", product_id=product_id)
-            raise HTTPException(status_code=404, detail="Product not found")
-        logger.info("product_retrieved", product_id=product_id)
-        return product
+        payment = db.query(Payment).filter(Payment.id == payment_id).first()
+        if not payment:
+            logger.warning("payment_not_found", payment_id=payment_id)
+            raise HTTPException(status_code=404, detail="Payment not found")
+        logger.info("payment_retrieved", payment_id=payment_id)
+        return payment
     except SQLAlchemyError as e:
-        logger.error("db_error_get_product", error=str(e), product_id=product_id)
+        logger.error("db_error_get_payment", error=str(e), payment_id=payment_id)
         raise HTTPException(status_code=500, detail="Database error")
     except Exception as e:
-        logger.error("unknown_error_get_product", error=str(e), product_id=product_id)
+        logger.error("unknown_error_get_payment", error=str(e), payment_id=payment_id)
         raise HTTPException(status_code=500, detail="Unknown server error")
 
 @app.get("/health", status_code=status.HTTP_200_OK)
@@ -81,6 +83,7 @@ def healthcheck(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error("healthcheck_failed", error=str(e))
         raise HTTPException(status_code=503, detail="Service unhealthy")
+
 
 # Prometheus Metrics
 Instrumentator().instrument(app).expose(app)
@@ -94,7 +97,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 def setup_tracing():
-    provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "product-service"}))
+    provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "payment-service"}))
     trace.set_tracer_provider(provider)
     jaeger_exporter = JaegerExporter(
         agent_host_name="jaeger",
