@@ -20,7 +20,7 @@ resource "docker_image" "loki" {
 }
 resource "docker_container" "loki" {
   name  = "loki"
-  image = docker_image.loki.latest
+  image = docker_image.loki.name
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -41,7 +41,7 @@ resource "docker_image" "prometheus" {
 }
 resource "docker_container" "prometheus" {
   name  = "prometheus"
-  image = docker_image.prometheus.latest
+  image = docker_image.prometheus.name
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -61,7 +61,7 @@ resource "docker_image" "jaeger" {
 }
 resource "docker_container" "jaeger" {
   name  = "jaeger"
-  image = docker_image.jaeger.latest
+  image = docker_image.jaeger.name
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -82,7 +82,7 @@ resource "docker_image" "grafana" {
 }
 resource "docker_container" "grafana" {
   name  = "grafana"
-  image = docker_image.grafana.latest
+  image = docker_image.grafana.name
   networks_advanced {
     name = docker_network.monitoring.name
   }
