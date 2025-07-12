@@ -10,3 +10,4 @@ opentelemetry-sdk
 opentelemetry-instrumentation
 opentelemetry-instrumentation-fastapi
 opentelemetry-exporter-jaeger
+Deprecated
