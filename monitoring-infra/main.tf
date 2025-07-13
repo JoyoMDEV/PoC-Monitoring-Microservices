@@ -29,7 +29,7 @@ resource "docker_container" "loki" {
     external = 3100
   }
   volumes {
-    host_path      = "${path.module}/loki-config.yaml"
+    host_path      = abspath("${path.module}/loki-config.yaml")
     container_path = "/etc/loki/local-config.yaml"
   }
   command = ["-config.file=/etc/loki/local-config.yaml"]
@@ -50,7 +50,7 @@ resource "docker_container" "prometheus" {
     external = 9090
   }
   volumes {
-    host_path      = "${path.module}/prometheus.yml"
+    host_path      = abspath("${path.module}/prometheus.yml")
     container_path = "/etc/prometheus/prometheus.yml"
   }
 }
