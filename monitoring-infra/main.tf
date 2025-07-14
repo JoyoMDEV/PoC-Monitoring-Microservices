@@ -87,7 +87,7 @@ resource "docker_container" "promtail" {
   command = ["-config.file=/etc/promtail/promtail.yaml"]
 
   labels {
-    label = "com.docker.compose.service"
+    label = "logging"
     value = "promtail"
   }
   labels {
