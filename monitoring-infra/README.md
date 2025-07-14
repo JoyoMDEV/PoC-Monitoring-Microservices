@@ -1,112 +1,116 @@
-# Monitoring-Infrastruktur mit Terraform und Docker
+# Monitoring- und Observability-Stack mit Terraform
 
-Dieses Projekt stellt eine wiederverwendbare Infrastruktur für das Monitoring und Observability einer Microservice-Architektur bereit.  
-Deployt werden mit Terraform die Services **Prometheus**, **Jaeger**, **Loki** sowie optional **Grafana** – alle als Docker-Container im gleichen Docker-Netzwerk.
+Dieses Repository enthält eine produktionsnahe Monitoring- und Observability-Lösung für Microservices, komplett als Infrastruktur-Code mit **Terraform** realisiert.
 
-## Übersicht
+## Features
 
-- **Prometheus**: Monitoring & Metrics für Microservices (z. B. FastAPI-Services)
-- **Loki**: Zentrale Sammlung und Verwaltung von Logs
-- **Jaeger**: Distributed Tracing für Microservices (OpenTelemetry-kompatibel)
-- **Grafana** (optional): Visualisierung von Logs und Metriken
-- **Terraform**: Infrastructure as Code (IaC) zur einfachen, reproduzierbaren Bereitstellung
-
----
+- **Prometheus** (Metriken) inkl. Alerting/Alertmanager
+- **Grafana** (Dashboards, zentrale UI, Alerts)
+- **Loki** & **Promtail** (Log Aggregation)
+- **Jaeger** (Distributed Tracing)
+- **Node Exporter & cAdvisor** (System- und Container-Metriken)
+- **Dashboards as Code** und zentrale Konfigurationsdateien
+- **Alles als Code** – vollständig versionierbar & dokumentierbar
 
 ## Projektstruktur
 
-```bash
-/monitoring-infra/
-  ├── main.tf               # Haupt-Terraform-Konfiguration
-  ├── outputs.tf            # (optional) Ausgaben, z. B. Service-URLs
-  ├── prometheus.yml        # Prometheus-Targets (Microservices als Monitoring-Ziel)
-  ├── loki-config.yaml      # Loki-Konfiguration
-  └── README.md             # Diese Dokumentation
+```plaintext
+│   alertmanager.tf
+│   cadvisor.tf
+│   grafana.tf
+│   jaeger.tf
+│   loki.tf
+│   main.tf
+│   network.tf
+│   node_exporter.tf
+│   outputs.tf
+│   prometheus.tf
+│   promtail.tf
+│   README.md
+│   variables.tf
+│
+├───alertmanager
+│       alertmanager.yml
+│
+├───grafana
+│   ├───dashboards
+│   │       docker-overview.json
+│   │       loki-logs.json
+│   │       Observability-Overview.json
+│   │       tracing-overview.json
+│   │
+│   └───provisioning
+│       ├───dashboards
+│       │       my-dashboards.yml
+│       │
+│       └───datasources
+│               datasources.yaml
+│
+├───loki
+│       loki-config.yaml
+│
+├───prometheus
+│       alert.rules.yml
+│       prometheus.yml
+│
+└───promtail
+        promtail-config.yaml
 ```
 
----
+## Quickstart
 
-## Voraussetzungen
+1. **Voraussetzungen:**
+   - [Terraform](https://www.terraform.io/downloads)
+   - [Docker & Docker Compose](https://docs.docker.com/get-docker/)
+   - (Optional für Alertmanager-Mail: SMTP-Daten)
 
-- **Docker** (mind. Version 20.x)
-- **Terraform** (mind. Version 1.x)
-- Empfohlen: `docker-compose` für Microservices (z. B. Product-Service) im selben Netzwerk
+2. **Stack ausrollen**
 
----
+   ```bash
+   terraform init
+   terraform apply
+   ```
 
-## Nutzung
+3. **Zugriffe nach dem Deploy (Standard-Ports):**
 
-### 1. Projekt initialisieren
+   - **Grafana:**         <http://localhost:3000>
+   - **Prometheus:**      <http://localhost:9090>
+   - **Loki API:**        <http://localhost:3100>
+   - **Promtail Metrics:** <http://localhost:9080/metrics>
+   - **Jaeger UI:**       <http://localhost:16686>
+   - **Alertmanager:**    <http://localhost:9093>
+   - **cAdvisor:**        <http://localhost:8080>
+   - **Node Exporter:**   <http://localhost:9100/metrics>
 
-```bash
-cd monitoring-infra
-terraform init
-```
+4. **Grafana Login:**
+   - Standard-Login: `admin` / `admin` (beim ersten Login Passwort ändern)
+   - Dashboards werden automatisch provisioniert!
 
-### 2. Infrastruktur aufbauen
+5. **Konfigurationsanpassungen:**
+   - Ports, Container-Namen, Pfade, Labels etc. zentral in `variables.tf` ändern
+   - Service-Konfigurationen (z.B. Prometheus, Loki, Grafana) in den jeweiligen Unterordnern (`prometheus/`, `loki/`, ...)
 
-```bash
-terraform apply
-```
+6. **Dashboards & Alerting:**
+   - Dashboards als JSON unter `grafana/dashboards/`
+   - Alerting-Regeln in `prometheus/alert.rules.yml`
+   - Alertmanager-Konfiguration unter `alertmanager/alertmanager.yml`
 
-Bestätige mit `yes`, wenn du dazu aufgefordert wirst.
+## Hinweise zur Bachelorarbeit
 
----
+- Der Stack bildet eine **moderne Observability-Lösung** für Microservices-Architekturen ab.
+- Jede Komponente ist **als Code definiert** (IaC, Dashboards-as-Code, Alerting-as-Code).
+- Die Struktur ist **modular und skalierbar**: Erweiterungen (z.B. weitere Exporter, andere Backends) sind einfach möglich.
+- Der Stack eignet sich ideal, um Best Practices in Sachen Monitoring, Logging und Tracing zu demonstrieren.
 
-## Hinweise zur Integration mit Microservices
+## Weiterführende Ideen
 
-- Deine Microservices (z. B. `product`) sollten im gleichen Docker-Netzwerk laufen wie die Monitoring-Services.
-- Im Docker-Compose-File der Microservices:
+- Integration weiterer Exporter (Blackbox, mysqld, redis, etc.)
+- Anbindung an andere Notification-Kanäle (Slack, Teams, Webhook) im Alertmanager
+- Betrieb in Produktivumgebungen, Deployment in die Cloud (z.B. mit Terraform-Modulen für AWS/GCP)
 
-  ```yaml
-  networks:
-    monitoring:
-      external: true
-  ```
+## Kontakt
 
-  und für jeden Service:
-
-  ```yaml
-  networks:
-    - monitoring
-  ```
-
-- In der `prometheus.yml` können die Ziel-Services (z. B. `product:8000`) direkt angegeben werden.
-
----
-
-## Zugriffe auf die Dienste
-
-| Dienst      | URL                        | Beschreibung                    |
-|-------------|----------------------------|----------------------------------|
-| Prometheus  | <http://localhost:9090>      | Monitoring-Oberfläche           |
-| Loki        | <http://localhost:3100>      | API für Log-Sammlung            |
-| Jaeger      | <http://localhost:16686>     | Tracing-Oberfläche              |
-| Grafana     | <http://localhost:3000>      | (optional) Visualisierung       |
+Fragen, Feedback oder Anregungen?  
+Erstellt gerne ein Issue oder meldet euch direkt!
 
 ---
-
-## Abschalten
-
-Alle mit Terraform gestarteten Container können mit
-
-```bash
-terraform destroy
-```
-
-beendet und gelöscht werden.
-
----
-
-## Weiterführendes
-
-- [Prometheus Doku](https://prometheus.io/docs/introduction/overview/)
-- [Grafana Doku](https://grafana.com/docs/grafana/latest/)
-- [Jaeger Doku](https://www.jaegertracing.io/docs/)
-- [Loki Doku](https://grafana.com/docs/loki/latest/)
-- [Terraform Docker Provider](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs)
-
----
-
-**Tipp für die Bachelorarbeit:**  
-Dieses Setup erlaubt eine 100% reproduzierbare, versionierte Monitoring-Infrastruktur – ideal für Doku, Teamwork und Weiterentwicklung.
