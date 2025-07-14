@@ -1,6 +1,7 @@
 import logging
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -77,7 +78,7 @@ def get_payment(payment_id: int, db: Session = Depends(get_db)):
 @app.get("/health", status_code=status.HTTP_200_OK)
 def healthcheck(db: Session = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         logger.info("healthcheck_success")
         return {"status": "ok"}
     except Exception as e:
