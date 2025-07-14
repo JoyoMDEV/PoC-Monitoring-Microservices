@@ -84,7 +84,7 @@ Instrumentator().instrument(app).expose(app)
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry import trace
-from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -92,11 +92,11 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 def setup_tracing():
     provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "shop-service"}))
     trace.set_tracer_provider(provider)
-    jaeger_exporter = JaegerExporter(
-        agent_host_name="jaeger",
-        agent_port=6831,
+    otlp_exporter = OTLPSpanExporter(
+        endpoint="jaeger:4317",
+        insecure=True
     )
-    span_processor = BatchSpanProcessor(jaeger_exporter)
+    span_processor = BatchSpanProcessor(otlp_exporter)
     provider.add_span_processor(span_processor)
     FastAPIInstrumentor.instrument_app(app)
     HTTPXClientInstrumentor().instrument()   # <- Das macht httpx-Traces sichtbar!
