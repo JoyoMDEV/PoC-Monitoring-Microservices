@@ -9,20 +9,20 @@ infra:
 	cd $(MONITORING_INFRA) && terraform init && terraform apply -auto-approve
 
 services:
-	cd $(SERVICES_DIR) && docker-compose up --build -d
+	cd $(SERVICES_DIR) && docker compose up --build -d
 
 up: infra services
 
 down:
-	cd $(SERVICES_DIR) && docker-compose down
+	cd $(SERVICES_DIR) && docker compose down
 	cd $(MONITORING_INFRA) && terraform destroy -auto-approve
 
 logs:
-	cd $(SERVICES_DIR) && docker-compose logs -f
+	cd $(SERVICES_DIR) && docker compose logs -f
 
 status:
 	@echo "Docker Compose Services:"
-	cd $(SERVICES_DIR) && docker-compose ps
+	cd $(SERVICES_DIR) && docker compose ps
 	@echo "Terraform Monitoring-Infra:"
 	cd $(MONITORING_INFRA) && terraform show
 

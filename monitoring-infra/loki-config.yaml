@@ -29,16 +29,13 @@ storage_config:
   boltdb_shipper:
     active_index_directory: /tmp/loki/index
     cache_location: /tmp/loki/index_cache
-    shared_store: filesystem
   filesystem:
     directory: /tmp/loki/chunks
 limits_config:
   allow_structured_metadata: false
   enforce_metric_name: false
-  reject_old_samples: true
-  reject_old_samples_max_age: 168h
 chunk_store_config:
-  max_look_back_period: 0s
+  # You can probably remove this section, or check latest docs if needed
 table_manager:
   retention_deletes_enabled: false
   retention_period: 0s
