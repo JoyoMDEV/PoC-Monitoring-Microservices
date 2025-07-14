@@ -37,6 +37,10 @@ resource "docker_container" "loki" {
     "-config.file=/etc/loki/local-config.yaml",
     "-validation.allow-structured-metadata=false"
   ]
+  labels = {
+    "com.docker.compose.service" = "loki"
+    "com.docker.compose.project" = "monitoring"
+  }
 }
 
 # Promtail
@@ -75,6 +79,10 @@ resource "docker_container" "promtail" {
     read_only      = true
   }
   command = ["-config.file=/etc/promtail/promtail.yaml"]
+    labels = {
+    "com.docker.compose.service" = "promtail"
+    "com.docker.compose.project" = "monitoring"
+  }
 }
 
 # 3. Prometheus
@@ -100,6 +108,10 @@ resource "docker_container" "prometheus" {
     host_path      = "/var/run/docker.sock"
     container_path = "/var/run/docker.sock"
     read_only      = true
+  }
+    labels = {
+    "com.docker.compose.service" = "prometheus"
+    "com.docker.compose.project" = "monitoring"
   }
 }
 
@@ -139,6 +151,10 @@ resource "docker_container" "cadvisor" {
     read_only      = true
   }
   privileged = true
+    labels = {
+    "com.docker.compose.service" = "cadvisor"
+    "com.docker.compose.project" = "monitoring"
+  }
 }
 
 
@@ -160,6 +176,10 @@ resource "docker_container" "jaeger" {
   ports {
     internal = 16686
     external = 16686
+  }
+    labels = {
+    "com.docker.compose.service" = "jaeger"
+    "com.docker.compose.project" = "monitoring"
   }
 }
 
@@ -191,5 +211,9 @@ resource "docker_container" "grafana" {
     host_path      = abspath("${path.module}/grafana/dashboards")
     container_path = "/var/lib/grafana/dashboards"
     read_only      = true
+  }
+    labels = {
+    "com.docker.compose.service" = "grafana"
+    "com.docker.compose.project" = "monitoring"
   }
 }
