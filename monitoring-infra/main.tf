@@ -32,7 +32,10 @@ resource "docker_container" "loki" {
     host_path      = abspath("${path.module}/loki-config.yaml")
     container_path = "/etc/loki/local-config.yaml"
   }
-  command = ["-config.file=/etc/loki/local-config.yaml"]
+  command = [
+    "-config.file=/etc/loki/local-config.yaml",
+    "-validation.allow-structured-metadata=false"
+  ]
 }
 
 # 3. Prometheus
@@ -41,6 +44,7 @@ resource "docker_image" "prometheus" {
 }
 resource "docker_container" "prometheus" {
   name  = "prometheus"
+  user  = "0:0"
   image = docker_image.prometheus.name
   networks_advanced {
     name = docker_network.monitoring.name
