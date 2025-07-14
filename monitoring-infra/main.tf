@@ -9,12 +9,11 @@ terraform {
 
 provider "docker" {}
 
-# 1. Gemeinsames Netzwerk für Monitoring und Microservices
 resource "docker_network" "monitoring" {
   name = "monitoring"
 }
 
-# 2. Loki
+# Loki
 resource "docker_image" "loki" {
   name = "grafana/loki:latest"
 }
@@ -22,6 +21,7 @@ resource "docker_container" "loki" {
   name  = "loki"
   user  = "0:0"
   image = docker_image.loki.name
+
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -37,9 +37,14 @@ resource "docker_container" "loki" {
     "-config.file=/etc/loki/local-config.yaml",
     "-validation.allow-structured-metadata=false"
   ]
-  labels = {
-    "com.docker.compose.service" = "loki"
-    "com.docker.compose.project" = "monitoring"
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "loki"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
   }
 }
 
@@ -51,6 +56,7 @@ resource "docker_container" "promtail" {
   name   = "promtail"
   user   = "0:0"
   image  = docker_image.promtail.name
+
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -79,13 +85,18 @@ resource "docker_container" "promtail" {
     read_only      = true
   }
   command = ["-config.file=/etc/promtail/promtail.yaml"]
-    labels = {
-    "com.docker.compose.service" = "promtail"
-    "com.docker.compose.project" = "monitoring"
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "promtail"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
   }
 }
 
-# 3. Prometheus
+# Prometheus
 resource "docker_image" "prometheus" {
   name = "prom/prometheus:latest"
 }
@@ -93,6 +104,7 @@ resource "docker_container" "prometheus" {
   name  = "prometheus"
   user  = "0:0"
   image = docker_image.prometheus.name
+
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -109,9 +121,14 @@ resource "docker_container" "prometheus" {
     container_path = "/var/run/docker.sock"
     read_only      = true
   }
-    labels = {
-    "com.docker.compose.service" = "prometheus"
-    "com.docker.compose.project" = "monitoring"
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "prometheus"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
   }
 }
 
@@ -123,6 +140,7 @@ resource "docker_image" "cadvisor" {
 resource "docker_container" "cadvisor" {
   name  = "cadvisor"
   image = docker_image.cadvisor.name
+
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -151,20 +169,25 @@ resource "docker_container" "cadvisor" {
     read_only      = true
   }
   privileged = true
-    labels = {
-    "com.docker.compose.service" = "cadvisor"
-    "com.docker.compose.project" = "monitoring"
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "cadvisor"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
   }
 }
 
-
-# 4. Jaeger
+# Jaeger
 resource "docker_image" "jaeger" {
   name = "jaegertracing/all-in-one:latest"
 }
 resource "docker_container" "jaeger" {
   name  = "jaeger"
   image = docker_image.jaeger.name
+
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -177,19 +200,25 @@ resource "docker_container" "jaeger" {
     internal = 16686
     external = 16686
   }
-    labels = {
-    "com.docker.compose.service" = "jaeger"
-    "com.docker.compose.project" = "monitoring"
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "jaeger"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
   }
 }
 
-# 5. (Optional) Grafana für Visualisierung
+# Grafana
 resource "docker_image" "grafana" {
   name = "grafana/grafana:latest"
 }
 resource "docker_container" "grafana" {
   name  = "grafana"
   image = docker_image.grafana.name
+
   networks_advanced {
     name = docker_network.monitoring.name
   }
@@ -212,8 +241,13 @@ resource "docker_container" "grafana" {
     container_path = "/var/lib/grafana/dashboards"
     read_only      = true
   }
-    labels = {
-    "com.docker.compose.service" = "grafana"
-    "com.docker.compose.project" = "monitoring"
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "grafana"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
   }
 }
