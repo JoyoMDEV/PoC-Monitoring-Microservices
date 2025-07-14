@@ -1,0 +1,30 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+    relabel_configs:
+      # Nur laufende Container
+      - source_labels: [__meta_docker_container_status]
+        regex: running
+        action: keep
+      # Setze container_name als label
+      - source_labels: [__meta_docker_container_name]
+        target_label: container
+      # Lies Log-Dateien der Container
+      - source_labels: [__meta_docker_container_log_path]
+        target_label: __path__
+      - source_labels: [__meta_docker_container_image]
+        target_label: image
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        target_label: service
+

@@ -30,13 +30,51 @@ resource "docker_container" "loki" {
     external = 3100
   }
   volumes {
-    host_path      = abspath("${path.module}/loki-config.yaml")
+    host_path      = abspath("${path.module}/loki/loki-config.yaml")
     container_path = "/etc/loki/local-config.yaml"
   }
   command = [
     "-config.file=/etc/loki/local-config.yaml",
     "-validation.allow-structured-metadata=false"
   ]
+}
+
+# Promtail
+resource "docker_image" "promtail" {
+  name = "grafana/promtail:latest"
+}
+resource "docker_container" "promtail" {
+  name   = "promtail"
+  user   = "0:0"
+  image  = docker_image.promtail.name
+  networks_advanced {
+    name = docker_network.monitoring.name
+  }
+  ports {
+    internal = 9080
+    external = 9080
+  }
+  volumes {
+    host_path      = abspath("${path.module}/promtail/promtail-config.yaml")
+    container_path = "/etc/promtail/promtail.yaml"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/var/run/docker.sock"
+    container_path = "/var/run/docker.sock"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/var/lib/docker/containers"
+    container_path = "/var/lib/docker/containers"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/etc/hostname"
+    container_path = "/etc/hostname"
+    read_only      = true
+  }
+  command = ["-config.file=/etc/promtail/promtail.yaml"]
 }
 
 # 3. Prometheus
@@ -55,7 +93,7 @@ resource "docker_container" "prometheus" {
     external = 9090
   }
   volumes {
-    host_path      = abspath("${path.module}/prometheus.yml")
+    host_path      = abspath("${path.module}/prometheus/prometheus.yml")
     container_path = "/etc/prometheus/prometheus.yml"
   }
   volumes {
