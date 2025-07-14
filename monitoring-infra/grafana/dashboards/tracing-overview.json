@@ -1,0 +1,190 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "description": "Überblick und Detailansicht für Jaeger-Tracing (Services, Spans, Heatmaps, TraceID-Suche)",
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": null,
+    "iteration": 1697714203356,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "jaeger",
+                "uid": "jaeger"
+            },
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "defaultQuery": "service.name:order-service",
+                "enableLog": false,
+                "enableTrace": true,
+                "layout": "timeline",
+                "showOperations": true
+            },
+            "pluginVersion": "10.4.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "jaeger",
+                        "uid": "jaeger"
+                    },
+                    "queryType": "trace"
+                }
+            ],
+            "title": "Trace Explorer (alle Traces, filterbar)",
+            "type": "tracing"
+        },
+        {
+            "datasource": {
+                "type": "jaeger",
+                "uid": "jaeger"
+            },
+            "description": "Anzahl Traces pro Service",
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 8
+            },
+            "id": 2,
+            "options": {
+                "calculation": "count",
+                "field": "service.name",
+                "interval": "1m",
+                "showField": true
+            },
+            "pluginVersion": "10.4.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "jaeger",
+                        "uid": "jaeger"
+                    },
+                    "queryType": "traces_count"
+                }
+            ],
+            "title": "Traces pro Service",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "jaeger",
+                "uid": "jaeger"
+            },
+            "description": "Latenz Heatmap für Traces",
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 8
+            },
+            "id": 3,
+            "options": {
+                "field": "duration",
+                "interval": "1m"
+            },
+            "pluginVersion": "10.4.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "jaeger",
+                        "uid": "jaeger"
+                    },
+                    "queryType": "traces_latency"
+                }
+            ],
+            "title": "Trace Latenzen (Heatmap)",
+            "type": "heatmap"
+        },
+        {
+            "datasource": {
+                "type": "jaeger",
+                "uid": "jaeger"
+            },
+            "description": "Suche nach spezifischer TraceID",
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 16
+            },
+            "id": 4,
+            "options": {
+                "showField": true
+            },
+            "pluginVersion": "10.4.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "jaeger",
+                        "uid": "jaeger"
+                    },
+                    "queryType": "trace_by_id"
+                }
+            ],
+            "title": "TraceID Suche",
+            "type": "tracing"
+        }
+    ],
+    "refresh": "30s",
+    "schemaVersion": 39,
+    "style": "dark",
+    "tags": [
+        "tracing",
+        "jaeger"
+    ],
+    "templating": {
+        "list": [
+            {
+                "name": "service",
+                "type": "query",
+                "datasource": {
+                    "type": "jaeger",
+                    "uid": "jaeger"
+                },
+                "query": "services",
+                "label": "Service",
+                "current": {
+                    "selected": false,
+                    "text": "order-service",
+                    "value": "order-service"
+                },
+                "includeAll": true,
+                "multi": true,
+                "refresh": 1
+            }
+        ]
+    },
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "title": "Jaeger Tracing Übersicht",
+    "uid": "jaeger-overview",
+    "version": 1,
+    "weekStart": ""
+}

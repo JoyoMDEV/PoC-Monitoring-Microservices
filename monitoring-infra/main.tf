@@ -180,6 +180,94 @@ resource "docker_container" "cadvisor" {
   }
 }
 
+# Node Exporter
+resource "docker_image" "node_exporter" {
+  name = "prom/node-exporter:latest"
+}
+
+resource "docker_container" "node_exporter" {
+  name  = "node_exporter"
+  user  = "0:0"
+  image = docker_image.node_exporter.name
+
+  networks_advanced {
+    name = docker_network.monitoring.name
+  }
+
+  ports {
+    internal = 9100
+    external = 9100
+  }
+
+  volumes {
+    host_path      = "/proc"
+    container_path = "/host/proc"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/sys"
+    container_path = "/host/sys"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/"
+    container_path = "/rootfs"
+    read_only      = true
+  }
+
+  command = [
+    "--path.procfs=/host/proc",
+    "--path.sysfs=/host/sys",
+    "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)",
+    "--path.rootfs=/rootfs"
+  ]
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "node_exporter"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
+  }
+}
+
+# Alertmanager
+
+resource "docker_image" "alertmanager" {
+  name = "prom/alertmanager:latest"
+}
+
+resource "docker_container" "alertmanager" {
+  name  = "alertmanager"
+  image = docker_image.alertmanager.name
+
+  networks_advanced {
+    name = docker_network.monitoring.name
+  }
+
+  ports {
+    internal = 9093
+    external = 9093
+  }
+
+  volumes {
+    host_path      = abspath("${path.module}/alertmanager/alertmanager.yml")
+    container_path = "/etc/alertmanager/alertmanager.yml"
+    read_only      = true
+  }
+
+  labels {
+    label = "com.docker.compose.service"
+    value = "alertmanager"
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "monitoring"
+  }
+}
+
+
 # Jaeger
 resource "docker_image" "jaeger" {
   name = "jaegertracing/all-in-one:latest"

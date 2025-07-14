@@ -15,3 +15,24 @@ datasources:
       minInterval: "1s"
     version: 1
     editable: true
+  
+  - name: jaeger
+    type: jaeger
+    access: proxy
+    url: http://jaeger:16686
+    jsonData:
+      esVersion: 7
+      esIndices: "jaeger-*"
+      esTimeField: "@timestamp"
+    version: 1
+    editable: true
+  
+  - name: alertmanager
+    type: prometheusAlertmanager
+    access: proxy
+    url: http://alertmanager:9093
+    jsonData:
+      apiVersion: 2
+      alertmanagerVersion: "v2"
+    version: 1
+    editable: true

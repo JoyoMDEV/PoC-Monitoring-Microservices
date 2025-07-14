@@ -1,0 +1,15 @@
+global:
+  resolve_timeout: 1m
+
+route:
+  receiver: 'default'
+
+receivers:
+  - name: 'default'
+    email_configs:
+      - to: 'deine.mail@beispiel.de'
+        from: 'alert@monitoring.local'
+        smarthost: 'smtp.beispiel.de:587'
+        auth_username: 'alert@monitoring.local'
+        auth_password: 'DEIN_SMTP_PASS'
+        send_resolved: true
