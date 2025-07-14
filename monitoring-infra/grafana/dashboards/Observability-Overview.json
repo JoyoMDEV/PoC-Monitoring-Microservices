@@ -1,11 +1,371 @@
 {
-    "title": "Observability Overview",
-    "uid": "obs-overview",
-    "description": "Kompakte Übersicht: Metriken, Logs, Traces & Alerts für Microservices.",
-    "time": {
-        "from": "now-30m",
-        "to": "now"
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
     },
+    "description": "Kompakte Übersicht: Metriken, Logs, Traces & Alerts für Microservices.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 3,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "loki",
+                "uid": "loki"
+            },
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "dedupStrategy": "none",
+                "enableInfiniteScrolling": false,
+                "enableLogDetails": true,
+                "prettifyLogMessage": true,
+                "rowsPerPage": 30,
+                "showCommonLabels": false,
+                "showLabels": true,
+                "showTime": true,
+                "sortOrder": "Descending",
+                "wrapLogMessage": true
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+                {
+                    "direction": "backward",
+                    "editorMode": "code",
+                    "expr": "{job=\"docker\", service=~\".+\"}",
+                    "queryType": "range",
+                    "refId": "A"
+                }
+            ],
+            "title": "Letzte Logs (Loki, filterbar)",
+            "type": "logs"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 12,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+                {
+                    "expr": "sum(rate(http_requests_total{job=~\"$service\"}[1m]))",
+                    "legendFormat": "HTTP reqs/sec",
+                    "refId": "B"
+                }
+            ],
+            "title": "HTTP Requests pro Sekunde (Prometheus)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 16,
+                "y": 0
+            },
+            "id": 3,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+                {
+                    "expr": "sum(rate(http_requests_total{job=~\"$service\", status=~\"5..\"}[5m]))",
+                    "legendFormat": "Fehlerrate",
+                    "refId": "C"
+                }
+            ],
+            "title": "Fehlerrate (5xx) (Prometheus)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 20,
+                "y": 0
+            },
+            "id": 4,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+                {
+                    "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+                    "legendFormat": "CPU (%)",
+                    "refId": "D"
+                }
+            ],
+            "title": "CPU Nutzung Host (Node Exporter)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 12,
+                "y": 5
+            },
+            "id": 5,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+                {
+                    "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+                    "legendFormat": "RAM (%)",
+                    "refId": "E"
+                }
+            ],
+            "title": "RAM Nutzung Host (Node Exporter)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "jaeger",
+                "uid": "jaeger"
+            },
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 10
+            },
+            "id": 6,
+            "options": {
+                "defaultQuery": "service.name:$service",
+                "enableTrace": true,
+                "layout": "timeline",
+                "showOperations": true
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+                {
+                    "queryType": "trace",
+                    "refId": "A"
+                }
+            ],
+            "title": "Letzte Traces (Jaeger)",
+            "type": "tracing"
+        },
+        {
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 24,
+                "x": 0,
+                "y": 20
+            },
+            "id": 7,
+            "options": {
+                "alertInstanceLabelFilter": "",
+                "alertName": "",
+                "dashboardAlerts": false,
+                "groupBy": [],
+                "groupMode": "default",
+                "maxItems": 20,
+                "showInactiveAlerts": false,
+                "sortOrder": 1,
+                "stateFilter": {
+                    "error": true,
+                    "firing": true,
+                    "noData": false,
+                    "normal": false,
+                    "pending": true,
+                    "recovering": true
+                },
+                "viewMode": "list"
+            },
+            "pluginVersion": "12.0.2",
+            "title": "Alerts (Alertmanager)",
+            "type": "alertlist"
+        }
+    ],
+    "preload": false,
+    "refresh": "10s",
+    "schemaVersion": 41,
     "tags": [
         "overview",
         "observability",
@@ -14,193 +374,30 @@
         "prometheus",
         "alertmanager"
     ],
-    "schemaVersion": 39,
-    "refresh": "10s",
     "templating": {
         "list": [
             {
-                "name": "service",
-                "type": "query",
                 "datasource": {
                     "type": "loki",
                     "uid": "loki"
                 },
                 "definition": "label_values({job=\"docker\"}, service)",
-                "multi": true,
                 "includeAll": true,
+                "label": "Service",
+                "multi": true,
+                "name": "service",
                 "refresh": 1,
-                "label": "Service"
+                "type": "query"
             }
         ]
     },
-    "panels": [
-        {
-            "type": "logs",
-            "title": "Letzte Logs (Loki, filterbar)",
-            "datasource": {
-                "type": "loki",
-                "uid": "loki"
-            },
-            "targets": [
-                {
-                    "expr": "{job=\"docker\", service=~\"$service\"}",
-                    "refId": "A"
-                }
-            ],
-            "options": {
-                "dedupStrategy": "none",
-                "showLabels": true,
-                "showTime": true,
-                "wrapLogMessage": true,
-                "sortOrder": "Descending",
-                "enableLogDetails": true,
-                "rowsPerPage": 30,
-                "prettifyLogMessage": true
-            },
-            "gridPos": {
-                "h": 10,
-                "w": 12,
-                "x": 0,
-                "y": 0
-            },
-            "id": 1
-        },
-        {
-            "type": "stat",
-            "title": "HTTP Requests pro Sekunde (Prometheus)",
-            "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-            },
-            "targets": [
-                {
-                    "expr": "sum(rate(http_requests_total{job=~\"$service\"}[1m]))",
-                    "legendFormat": "HTTP reqs/sec",
-                    "refId": "B"
-                }
-            ],
-            "gridPos": {
-                "h": 5,
-                "w": 4,
-                "x": 12,
-                "y": 0
-            },
-            "id": 2
-        },
-        {
-            "type": "stat",
-            "title": "Fehlerrate (5xx) (Prometheus)",
-            "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-            },
-            "targets": [
-                {
-                    "expr": "sum(rate(http_requests_total{job=~\"$service\", status=~\"5..\"}[5m]))",
-                    "legendFormat": "Fehlerrate",
-                    "refId": "C"
-                }
-            ],
-            "gridPos": {
-                "h": 5,
-                "w": 4,
-                "x": 16,
-                "y": 0
-            },
-            "id": 3
-        },
-        {
-            "type": "stat",
-            "title": "CPU Nutzung Host (Node Exporter)",
-            "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-            },
-            "targets": [
-                {
-                    "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
-                    "legendFormat": "CPU (%)",
-                    "refId": "D"
-                }
-            ],
-            "gridPos": {
-                "h": 5,
-                "w": 4,
-                "x": 20,
-                "y": 0
-            },
-            "id": 4
-        },
-        {
-            "type": "stat",
-            "title": "RAM Nutzung Host (Node Exporter)",
-            "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-            },
-            "targets": [
-                {
-                    "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
-                    "legendFormat": "RAM (%)",
-                    "refId": "E"
-                }
-            ],
-            "gridPos": {
-                "h": 5,
-                "w": 4,
-                "x": 12,
-                "y": 5
-            },
-            "id": 5
-        },
-        {
-            "type": "tracing",
-            "title": "Letzte Traces (Jaeger)",
-            "datasource": {
-                "type": "jaeger",
-                "uid": "jaeger"
-            },
-            "options": {
-                "enableTrace": true,
-                "defaultQuery": "service.name:$service",
-                "layout": "timeline",
-                "showOperations": true
-            },
-            "targets": [
-                {
-                    "queryType": "trace"
-                }
-            ],
-            "gridPos": {
-                "h": 10,
-                "w": 12,
-                "x": 12,
-                "y": 5
-            },
-            "id": 6
-        },
-        {
-            "type": "alertlist",
-            "title": "Alerts (Alertmanager)",
-            "datasource": {
-                "type": "alertmanager",
-                "uid": "alertmanager"
-            },
-            "targets": [
-                {
-                    "expr": "",
-                    "refId": "F"
-                }
-            ],
-            "gridPos": {
-                "h": 6,
-                "w": 24,
-                "x": 0,
-                "y": 15
-            },
-            "id": 7
-        }
-    ],
-    "editable": true,
+    "time": {
+        "from": "now-30m",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Observability Overview",
+    "uid": "obs-overview",
     "version": 1
 }

@@ -35,7 +35,7 @@ resource "docker_container" "node_exporter" {
   command = [
     "--path.procfs=/host/proc",
     "--path.sysfs=/host/sys",
-    "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)",
+    "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|run/user)($|/)",
     "--path.rootfs=/rootfs"
   ]
 
