@@ -53,7 +53,51 @@ resource "docker_container" "prometheus" {
     host_path      = abspath("${path.module}/prometheus.yml")
     container_path = "/etc/prometheus/prometheus.yml"
   }
+  volumes {
+    host_path      = "/var/run/docker.sock"
+    container_path = "/var/run/docker.sock"
+    read_only      = true
+  }
 }
+
+# cAdvisor
+resource "docker_image" "cadvisor" {
+  name = "gcr.io/cadvisor/cadvisor:latest"
+}
+
+resource "docker_container" "cadvisor" {
+  name  = "cadvisor"
+  image = docker_image.cadvisor.name
+  networks_advanced {
+    name = docker_network.monitoring.name
+  }
+  ports {
+    internal = 8080
+    external = 8080
+  }
+  volumes {
+    host_path      = "/"
+    container_path = "/rootfs"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/var/run"
+    container_path = "/var/run"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/sys"
+    container_path = "/sys"
+    read_only      = true
+  }
+  volumes {
+    host_path      = "/var/lib/docker/"
+    container_path = "/var/lib/docker"
+    read_only      = true
+  }
+  privileged = true
+}
+
 
 # 4. Jaeger
 resource "docker_image" "jaeger" {
@@ -89,5 +133,20 @@ resource "docker_container" "grafana" {
   ports {
     internal = 3000
     external = 3000
+  }
+  volumes {
+    host_path      = abspath("${path.module}/grafana/provisioning/dashboards")
+    container_path = "/etc/grafana/provisioning/dashboards"
+    read_only      = true
+  }
+  volumes {
+    host_path      = abspath("${path.module}/grafana/provisioning/datasources")
+    container_path = "/etc/grafana/provisioning/datasources"
+    read_only      = true
+  }
+  volumes {
+    host_path      = abspath("${path.module}/grafana/dashboards")
+    container_path = "/var/lib/grafana/dashboards"
+    read_only      = true
   }
 }
