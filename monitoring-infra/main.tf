@@ -20,6 +20,7 @@ resource "docker_image" "loki" {
 }
 resource "docker_container" "loki" {
   name  = "loki"
+  user  = "0:0"
   image = docker_image.loki.name
   networks_advanced {
     name = docker_network.monitoring.name
