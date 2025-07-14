@@ -60,6 +60,17 @@ services:
       DB_NAME: ${PAYMENT_DB}
     networks:
       - monitoring
+  shop:
+    build: ./shop
+    container_name: shop
+    depends_on:
+      - product
+      - order
+      - payment
+    ports:
+      - "8004:8000"
+    networks:
+      - monitoring
 
 networks:
   monitoring:
