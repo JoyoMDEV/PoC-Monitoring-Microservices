@@ -94,7 +94,7 @@ def setup_tracing():
     trace.set_tracer_provider(provider)
     jaeger_exporter = JaegerExporter(
         agent_host_name="jaeger",
-        agent_port=6831,
+        agent_port=16686,
     )
     span_processor = BatchSpanProcessor(jaeger_exporter)
     provider.add_span_processor(span_processor)

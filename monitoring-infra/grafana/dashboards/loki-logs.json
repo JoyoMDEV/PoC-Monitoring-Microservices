@@ -84,7 +84,7 @@
     "templating": {
         "list": [
             {
-                "allValue": ".*",
+                "allValue": ".+",
                 "current": {
                     "selected": true,
                     "text": "loki",
@@ -109,7 +109,7 @@
                 "useTags": false
             },
             {
-                "allValue": ".*",
+                "allValue": ".+",
                 "current": {},
                 "datasource": "loki",
                 "definition": "label_values({namespace=\"$namespace\"}, pod)",
