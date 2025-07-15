@@ -16,7 +16,7 @@ scrape_configs:
 
   - job_name: 'microservices'
     static_configs:
-      - targets: ['product:8000', 'order:8000', 'payment:8000']
+      - targets: ['nginx:80/product', 'nginx:80/order', 'nginx:80/payment', 'nginx:80/shop']
 
   - job_name: 'docker-microservices'
     docker_sd_configs:

@@ -13,7 +13,7 @@ variable "app_network_name" {
 variable "nginx_image" {
   description = "Nginx Docker Image"
   type        = string
-  default     = "nginx:alpine"
+  default     = "nginx:latest"
 }
 
 variable "loki_image" {
