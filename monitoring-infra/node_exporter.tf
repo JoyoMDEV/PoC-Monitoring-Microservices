@@ -13,7 +13,6 @@ resource "docker_container" "node_exporter" {
 
   ports {
     internal = var.node_exporter_port
-    external = var.node_exporter_port
   }
 
   volumes {

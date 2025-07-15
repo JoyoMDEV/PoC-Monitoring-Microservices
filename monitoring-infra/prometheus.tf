@@ -13,7 +13,6 @@ resource "docker_container" "prometheus" {
 
   ports {
     internal = var.prometheus_port
-    external = var.prometheus_port
   }
 
   volumes {

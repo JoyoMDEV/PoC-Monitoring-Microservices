@@ -12,7 +12,6 @@ resource "docker_container" "cadvisor" {
 
   ports {
     internal = var.cadvisor_port
-    external = var.cadvisor_port
   }
 
   volumes {

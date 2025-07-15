@@ -12,7 +12,6 @@ resource "docker_container" "alertmanager" {
 
   ports {
     internal = var.alertmanager_port
-    external = var.alertmanager_port
   }
 
   volumes {

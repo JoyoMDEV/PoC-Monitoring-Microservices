@@ -13,7 +13,6 @@ resource "docker_container" "loki" {
 
   ports {
     internal = var.loki_port
-    external = var.loki_port
   }
 
   volumes {

@@ -13,7 +13,6 @@ resource "docker_container" "promtail" {
 
   ports {
     internal = var.promtail_port
-    external = var.promtail_port
   }
 
   volumes {

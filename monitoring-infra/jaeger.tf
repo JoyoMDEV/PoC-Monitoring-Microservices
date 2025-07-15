@@ -12,12 +12,10 @@ resource "docker_container" "jaeger" {
 
   ports {
     internal = var.jaeger_udp_port
-    external = var.jaeger_udp_port
     protocol = "udp"
   }
   ports {
     internal = var.jaeger_web_port
-    external = var.jaeger_web_port
   }
 
   labels {
