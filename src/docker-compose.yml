@@ -8,8 +8,6 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${PRODUCT_DB} # Wird nur beim ersten Start erzeugt, weitere per Init-Skript
-    ports:
-      - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d # Siehe unten für mehrere DBs
@@ -21,8 +19,6 @@ services:
     container_name: product
     depends_on:
       - mariadb
-    ports:
-      - "8001:8000"
     environment:
       DB_HOST: mariadb
       DB_USER: ${MYSQL_USER}
@@ -36,8 +32,6 @@ services:
     container_name: order
     depends_on:
       - mariadb
-    ports:
-      - "8002:8000"
     environment:
       DB_HOST: mariadb
       DB_USER: ${MYSQL_USER}
@@ -51,8 +45,6 @@ services:
     container_name: payment
     depends_on:
       - mariadb
-    ports:
-      - "8003:8000"
     environment:
       DB_HOST: mariadb
       DB_USER: ${MYSQL_USER}
