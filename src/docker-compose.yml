@@ -14,7 +14,7 @@ services:
       - mariadb_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d # Siehe unten für mehrere DBs
     networks:
-      - monitoring
+      - app
 
   product:
     build: ./product
@@ -29,7 +29,7 @@ services:
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: ${PRODUCT_DB}
     networks:
-      - monitoring
+      - app
 
   order:
     build: ./order
@@ -44,7 +44,7 @@ services:
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: ${ORDER_DB}
     networks:
-      - monitoring
+      - app
 
   payment:
     build: ./payment
@@ -59,7 +59,7 @@ services:
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: ${PAYMENT_DB}
     networks:
-      - monitoring
+      - app
   shop:
     build: ./shop
     container_name: shop
@@ -70,10 +70,10 @@ services:
     ports:
       - "8004:8000"
     networks:
-      - monitoring
+      - app
 
 networks:
-  monitoring:
+  app:
     external: true # Von Terraform erzeugt, für Monitoring/Tracing
 
 volumes:

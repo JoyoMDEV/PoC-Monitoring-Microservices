@@ -1,7 +1,19 @@
-variable "network_name" {
+variable "monitoring_network_name" {
   description = "Name des Docker Netzwerks für Monitoring"
   type        = string
   default     = "monitoring"
+}
+
+variable "app_network_name" {
+  description = "Name des Docker Netzwerks für die Anwendung"
+  type        = string
+  default     = "app"
+}
+
+variable "nginx_image" {
+  description = "Nginx Docker Image"
+  type        = string
+  default     = "nginx:alpine"
 }
 
 variable "loki_image" {
