@@ -74,6 +74,7 @@ variable "jaeger_udp_port" { default = 6831 }
 variable "node_exporter_port" { default = 9100 }
 variable "cadvisor_port" { default = 8080 }
 variable "alertmanager_port" { default = 9093 }
+variable "nginx_port" { default = 80 }
 
 # Pfade für Konfigurationsdateien – nach deinem Projekt anpassen!
 variable "loki_config_path" {
