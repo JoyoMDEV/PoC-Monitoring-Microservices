@@ -42,12 +42,12 @@ Die Microservices hängen an diesem Netzwerk (siehe `docker-compose.yml`).
 
 ## Zugriffe
 
-| Service  | Adresse                      |
-|----------|------------------------------|
-| Product  | http://localhost:8001        |
-| Order    | http://localhost:8002        |
-| Payment  | http://localhost:8003        |
-| MariaDB  | localhost:3306               |
+| Service  | Adresse auf dem Host| Ardresse im Docker Netzwerk   |
+|----------|------------------------------|----------------------|
+| Product  | <http://localhost:8001>      |<http://product:8000> |
+| Order    | <http://localhost:8002>      |<http://order:8000>   |
+| Payment  | <http://localhost:8003>      |<http://payment:8000> |
+| MariaDB  | <http://localhost:3306>      |<http://mariadb:3306> |
 
 ## Health-Check
 
