@@ -51,6 +51,10 @@ resource "docker_container" "grafana" {
     value = "/grafana"
   }
   labels {
+    label = "traefik.http.middlewares.grafana-strip.stripprefix.forceSlash"
+    value = "false"
+  }
+  labels {
     label = "traefik.http.routers.grafana.middlewares"
     value = "grafana-strip"
   }
