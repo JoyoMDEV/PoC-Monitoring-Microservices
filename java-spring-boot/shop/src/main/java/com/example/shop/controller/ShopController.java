@@ -1,8 +1,8 @@
 package com.example.shop.controller;
 
-import com.example.shop.client.ProductClient;
-import com.example.shop.client.OrderClient;
-import com.example.shop.client.PaymentClient;
+import com.example.shop.clients.ProductClient;
+import com.example.shop.clients.OrderClient;
+import com.example.shop.clients.PaymentClient;
 import com.example.shop.dto.*;
 
 import lombok.RequiredArgsConstructor;
