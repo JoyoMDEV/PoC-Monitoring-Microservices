@@ -26,7 +26,7 @@ resource "docker_container" "traefik" {
     }
 
     volumes {
-        host_path      = "var/run/docker.sock"
+        host_path      = "/var/run/docker.sock"
         container_path = "/var/run/docker.sock"
         read_only      = false
     }
