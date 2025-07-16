@@ -51,30 +51,31 @@ resource "docker_container" "grafana" {
     value = "3000"
   }
 
-  # 1. RedirectRegex-Middleware: leitet /grafana nach /grafana/ um
+ labels {
+    label = "traefik.enable"
+    value = "true"
+  }
   labels {
-    label = "traefik.http.middlewares.grafana-redirect.redirectregex.regex"
+    label = "traefik.http.routers.grafana.rule"
+    value = "PathPrefix(`/grafana`)"
+  }
+  labels {
+    label = "traefik.http.services.grafana.loadbalancer.server.port"
+    value = "3000"
+  }
+
+  # OPTIONAL: kleines Helfer-Redirect nur für /grafana  → /grafana/
+  labels {
+    label = "traefik.http.middlewares.grafana-slash.redirectregex.regex"
     value = "^/grafana$"
   }
   labels {
-    label = "traefik.http.middlewares.grafana-redirect.redirectregex.replacement"
+    label = "traefik.http.middlewares.grafana-slash.redirectregex.replacement"
     value = "/grafana/"
   }
-
-  # 2. StripPrefix-Middleware: entfernt /grafana vor Weiterleitung an Grafana
-  labels {
-    label = "traefik.http.middlewares.grafana-strip.stripprefix.prefixes"
-    value = "/grafana"
-  }
-  labels {
-    label = "traefik.http.middlewares.grafana-strip.stripprefix.forceSlash"
-    value = "false"
-  }
-
-  # 3. Router: beide Middlewares anwenden (Reihenfolge ist wichtig!)
   labels {
     label = "traefik.http.routers.grafana.middlewares"
-    value = "grafana-redirect,grafana-strip"
+    value = "grafana-slash"
   }
 
   # ---- GRAFANA ENV ----
