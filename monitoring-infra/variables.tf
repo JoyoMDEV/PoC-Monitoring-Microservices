@@ -128,7 +128,7 @@ variable "grafana_service_label" {
   default = "grafana"
 }
 
-variable "traefik_service_labe" {
+variable "traefik_service_label" {
   default = "traefik"
 }
 
