@@ -30,6 +30,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.product.rule=PathPrefix(`/product`)"
       - "traefik.http.services.product.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.product-stripprefix.stripprefix.prefixes=/product"
+      - "traefik.http.routers.product.middlewares=product-stripprefix@docker"
 
   order:
     build: ./order
@@ -47,6 +49,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.order.rule=PathPrefix(`/order`)"
       - "traefik.http.services.order.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.order-stripprefix.stripprefix.prefixes=/order"
+      - "traefik.http.routers.order.middlewares=order-stripprefix@docker"
 
   payment:
     build: ./payment
@@ -64,6 +68,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.payment.rule=PathPrefix(`/payment`)"
       - "traefik.http.services.payment.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.payment-stripprefix.stripprefix.prefixes=/payment"
+      - "traefik.http.routers.payment.middlewares=payment-stripprefix@docker"
 
   shop:
     build: ./shop
@@ -80,6 +86,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.shop.rule=PathPrefix(`/shop`)"
       - "traefik.http.services.shop.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.shop-stripprefix.stripprefix.prefixes=/shop"
+      - "traefik.http.routers.shop.middlewares=shop-stripprefix@docker"
 
 networks:
   app:
