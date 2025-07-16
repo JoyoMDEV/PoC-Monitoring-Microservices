@@ -39,4 +39,13 @@ resource "docker_container" "traefik" {
         "--api.dashboard=true",
         "--api.insecure=true"
     ]
+    
+    labels {
+        label = var.standard_labels["compose_service"]
+        value = var.traefik_service_label
+    }
+    labels {
+        label = var.standard_labels["compose_project"]
+        value = var.compose_project_label
+    }
 }

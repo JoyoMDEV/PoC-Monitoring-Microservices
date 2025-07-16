@@ -128,6 +128,10 @@ variable "grafana_service_label" {
   default = "grafana"
 }
 
+variable "traefik_service_labe" {
+  default = "traefik"
+}
+
 variable "jaeger_service_label" {
   default = "jaeger"
 }
