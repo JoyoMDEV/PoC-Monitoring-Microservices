@@ -46,4 +46,16 @@ resource "docker_container" "grafana" {
     label = "traefik.http.services.grafana.loadbalancer.server.port"
     value = "3000"
   }
+  labels {
+    label = "traefik.http.middlewares.grafana-strip.stripprefix.prefixes"
+    value = "/grafana"
+  }
+  labels {
+    label = "traefik.http.routers.grafana.middlewares"
+    value = "grafana-strip"
+  }
+  env {
+    GF_SERVER_ROOT_URL            = "%(protocol)s://%(domain)s:/grafana/"
+    GF_SERVER_SERVE_FROM_SUB_PATH = "true"
+  }
 }
