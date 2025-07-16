@@ -54,7 +54,7 @@ resource "docker_container" "grafana" {
     label = "traefik.http.routers.grafana.middlewares"
     value = "grafana-strip"
   }
-  env {
+  env = {
     GF_SERVER_ROOT_URL            = "%(protocol)s://%(domain)s:/grafana/"
     GF_SERVER_SERVE_FROM_SUB_PATH = "true"
   }
