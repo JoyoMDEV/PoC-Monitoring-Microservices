@@ -20,6 +20,11 @@ resource "docker_container" "prometheus" {
     container_path = "/etc/prometheus/prometheus.yml"
   }
   volumes {
+    host_path      = abspath("${path.module}/prometheus/alert.rules.yml")
+    container_path = etc/prometheus/alert.rules.yml
+    read_only      = true
+  }
+  volumes {
     host_path      = "/var/run/docker.sock"
     container_path = "/var/run/docker.sock"
     read_only      = true
