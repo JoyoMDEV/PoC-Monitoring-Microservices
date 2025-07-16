@@ -1,0 +1,7 @@
+CREATE DATABASE IF NOT EXISTS productdb;
+CREATE DATABASE IF NOT EXISTS orderdb;
+CREATE DATABASE IF NOT EXISTS paymentdb;
+GRANT ALL PRIVILEGES ON productdb.* TO 'bachelor'@'%';
+GRANT ALL PRIVILEGES ON orderdb.* TO 'bachelor'@'%';
+GRANT ALL PRIVILEGES ON paymentdb.* TO 'bachelor'@'%';
+FLUSH PRIVILEGES;
