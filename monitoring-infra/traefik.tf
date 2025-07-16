@@ -18,6 +18,7 @@ resource "docker_container" "traefik" {
 
     ports {
         internal = var.traefik_port
+        external = var.traefik_port
     }
 
     ports {
