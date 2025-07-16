@@ -26,6 +26,10 @@ services:
       DB_NAME: ${PRODUCT_DB}
     networks:
       - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.product.rule=PathPrefix(`/product`)"
+      - "traefik.http.services.product.loadbalancer.server.port=8000"
 
   order:
     build: ./order
@@ -39,6 +43,10 @@ services:
       DB_NAME: ${ORDER_DB}
     networks:
       - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order.rule=PathPrefix(`/order`)"
+      - "traefik.http.services.order.loadbalancer.server.port=8000"
 
   payment:
     build: ./payment
@@ -52,6 +60,11 @@ services:
       DB_NAME: ${PAYMENT_DB}
     networks:
       - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payment.rule=PathPrefix(`/payment`)"
+      - "traefik.http.services.payment.loadbalancer.server.port=8000"
+
   shop:
     build: ./shop
     container_name: shop
@@ -63,6 +76,10 @@ services:
       - "8004:8000"
     networks:
       - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shop.rule=PathPrefix(`/shop`)"
+      - "traefik.http.services.shop.loadbalancer.server.port=8000"
 
 networks:
   app:

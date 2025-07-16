@@ -101,7 +101,7 @@ def setup_tracing():
     provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "order-service"}))
     trace.set_tracer_provider(provider)
     otlp_exporter = OTLPSpanExporter(
-        endpoint="nginx:80/jaeger/agent",
+        endpoint="traefik:4317",
         insecure=True
     )
     span_processor = BatchSpanProcessor(otlp_exporter)
