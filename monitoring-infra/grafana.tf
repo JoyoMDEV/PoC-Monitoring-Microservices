@@ -55,7 +55,7 @@ resource "docker_container" "grafana" {
     value = "grafana-strip"
   }
   env = [
-    "GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/",
+    "GF_SERVER_ROOT_URL=http://localhost/grafana/",
     "GF_SERVER_SERVE_FROM_SUB_PATH=true"
   ]
 
