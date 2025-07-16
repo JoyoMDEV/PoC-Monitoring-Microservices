@@ -11,10 +11,6 @@ resource "docker_container" "node_exporter" {
     name = docker_network.monitoring.name
   }
 
-  ports {
-    internal = var.node_exporter_port
-  }
-
   volumes {
     host_path      = "/proc"
     container_path = "/host/proc"

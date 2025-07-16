@@ -10,10 +10,6 @@ resource "docker_container" "cadvisor" {
     name = docker_network.monitoring.name
   }
 
-  ports {
-    internal = var.cadvisor_port
-  }
-
   volumes {
     host_path      = "/"
     container_path = "/rootfs"

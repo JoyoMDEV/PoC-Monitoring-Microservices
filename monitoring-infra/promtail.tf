@@ -10,11 +10,7 @@ resource "docker_container" "promtail" {
   networks_advanced {
     name = docker_network.monitoring.name
   }
-
-  ports {
-    internal = var.promtail_port
-  }
-
+  
   volumes {
     host_path      = abspath("${path.module}/${var.promtail_config_path}")
     container_path = "/etc/promtail/promtail.yaml"

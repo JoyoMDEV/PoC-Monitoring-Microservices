@@ -10,18 +10,6 @@ resource "docker_container" "jaeger" {
     name = docker_network.monitoring.name
   }
 
-  ports {
-    internal = var.jaeger_udp_port
-    protocol = "udp"
-  }
-  ports {
-    internal = var.jaeger_web_port
-  }
-
-  ports {
-    internal = var.jaeger_otlp_port
-  }
-
   labels {
     label = var.standard_labels["compose_service"]
     value = var.jaeger_service_label

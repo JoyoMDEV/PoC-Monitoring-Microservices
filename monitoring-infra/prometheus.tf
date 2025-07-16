@@ -11,10 +11,6 @@ resource "docker_container" "prometheus" {
     name = docker_network.monitoring.name
   }
 
-  ports {
-    internal = var.prometheus_port
-  }
-
   volumes {
     host_path      = abspath("${path.module}/${var.prometheus_config_path}")
     container_path = "/etc/prometheus/prometheus.yml"

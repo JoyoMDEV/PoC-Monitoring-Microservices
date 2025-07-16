@@ -10,11 +10,6 @@ resource "docker_container" "grafana" {
     name = docker_network.monitoring.name
   }
 
-  ports {
-    internal = var.grafana_port
-    external = var.grafana_port
-  }
-
   volumes {
     host_path      = abspath("${path.module}/${var.grafana_provisioning_dashboards_path}")
     container_path = "/etc/grafana/provisioning/dashboards"
@@ -38,5 +33,17 @@ resource "docker_container" "grafana" {
   labels {
     label = var.standard_labels["compose_project"]
     value = var.compose_project_label
+  }
+  labels {
+    label = "traefik.enable"
+    value = "true"
+  }
+  labels {
+    label = "traefik.http.routers.grafana.rule"
+    value = "PathPrefix(`/grafana`)"
+  }
+  labels {
+    label = "traefik.http.services.grafana.loadbalancer.server.port"
+    value = "3000"
   }
 }
