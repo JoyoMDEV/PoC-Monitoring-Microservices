@@ -26,8 +26,20 @@ public class ShopController {
     @PostMapping("/purchase")
     public ResponseEntity<?> purchase(@RequestBody ShopPurchaseRequest req) {
         try {
+            // 0. Validierung
+            try {
+                if (req.getProductId() == null){
+                    return ResponseEntity.badRequest().body(Map.of("error", "Product ID is required"));
+                }
+                if (req.getQuantity() <= 0){
+                    return ResponseEntity.badRequest().body(Map.of("error", "Quantity must be greater than 0"));
+                }
+            }
             // 1. Produktdaten holen
             ProductDto product = productClient.getProduct(req.getProductId());
+            if (product == null) {
+                return ResponseEntity.status(404).body(Map.of("error", "Prddduct not found"))
+            }
             double totalPrice = product.getPrice() * req.getQuantity();
 
             // 2. Order anlegen
