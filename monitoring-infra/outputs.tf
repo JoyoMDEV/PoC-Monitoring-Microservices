@@ -38,7 +38,12 @@ output "promtail_metrics_url" {
   value       = "http://localhost:${var.promtail_port}/metrics"
 }
 
-output "docker_network_name" {
-  description = "Name des verwendeten Docker Netzwerks"
+output "docker_monitoring_network_name" {
+  description = "Name des Monitoring Stacks Docker Netzwerks"
   value       = docker_network.monitoring.name
+}
+
+output "docker_microservice_network_name" {
+  description = "Name des Microservice Docker Netzwerks"
+  value       = docker_network.app.name
 }

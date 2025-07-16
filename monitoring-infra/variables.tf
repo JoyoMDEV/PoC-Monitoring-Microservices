@@ -1,7 +1,19 @@
-variable "network_name" {
+variable "monitoring_network_name" {
   description = "Name des Docker Netzwerks für Monitoring"
   type        = string
   default     = "monitoring"
+}
+
+variable "app_network_name" {
+  description = "Name des Docker Netzwerks für die Anwendung"
+  type        = string
+  default     = "app"
+}
+
+variable "traefik_image" {
+  description = "Traefik Docker Image"
+  type        = string
+  default     = "traefik:v3.0"
 }
 
 variable "loki_image" {
@@ -59,9 +71,12 @@ variable "prometheus_port" { default = 9090 }
 variable "grafana_port"  { default = 3000 }
 variable "jaeger_web_port" { default = 16686 }
 variable "jaeger_udp_port" { default = 6831 }
+variable "jaeger_otlp_port" { default = 4317 }
 variable "node_exporter_port" { default = 9100 }
 variable "cadvisor_port" { default = 8080 }
 variable "alertmanager_port" { default = 9093 }
+variable "traefik_port" { default = 80 }
+variable "traefik_web_port" { default = 8080 }
 
 # Pfade für Konfigurationsdateien – nach deinem Projekt anpassen!
 variable "loki_config_path" {
@@ -111,6 +126,10 @@ variable "prometheus_service_label" {
 
 variable "grafana_service_label" {
   default = "grafana"
+}
+
+variable "traefik_service_label" {
+  default = "traefik"
 }
 
 variable "jaeger_service_label" {

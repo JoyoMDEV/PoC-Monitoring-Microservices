@@ -11,14 +11,14 @@ resource "docker_container" "prometheus" {
     name = docker_network.monitoring.name
   }
 
-  ports {
-    internal = var.prometheus_port
-    external = var.prometheus_port
-  }
-
   volumes {
     host_path      = abspath("${path.module}/${var.prometheus_config_path}")
     container_path = "/etc/prometheus/prometheus.yml"
+  }
+  volumes {
+    host_path      = abspath("${path.module}/prometheus/alert.rules.yml")
+    container_path = "/etc/prometheus/alert.rules.yml"
+    read_only      = true
   }
   volumes {
     host_path      = "/var/run/docker.sock"

@@ -11,11 +11,6 @@ resource "docker_container" "loki" {
     name = docker_network.monitoring.name
   }
 
-  ports {
-    internal = var.loki_port
-    external = var.loki_port
-  }
-
   volumes {
     host_path      = abspath("${path.module}/${var.loki_config_path}")
     container_path = "/etc/loki/local-config.yaml"

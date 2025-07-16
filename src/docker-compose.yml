@@ -8,58 +8,69 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${PRODUCT_DB} # Wird nur beim ersten Start erzeugt, weitere per Init-Skript
-    ports:
-      - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d # Siehe unten für mehrere DBs
     networks:
-      - monitoring
+      - app
 
   product:
     build: ./product
     container_name: product
     depends_on:
       - mariadb
-    ports:
-      - "8001:8000"
     environment:
       DB_HOST: mariadb
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: ${PRODUCT_DB}
     networks:
-      - monitoring
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.product.rule=PathPrefix(`/product`)"
+      - "traefik.http.services.product.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.product-stripprefix.stripprefix.prefixes=/product"
+      - "traefik.http.routers.product.middlewares=product-stripprefix@docker"
 
   order:
     build: ./order
     container_name: order
     depends_on:
       - mariadb
-    ports:
-      - "8002:8000"
     environment:
       DB_HOST: mariadb
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: ${ORDER_DB}
     networks:
-      - monitoring
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order.rule=PathPrefix(`/order`)"
+      - "traefik.http.services.order.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.order-stripprefix.stripprefix.prefixes=/order"
+      - "traefik.http.routers.order.middlewares=order-stripprefix@docker"
 
   payment:
     build: ./payment
     container_name: payment
     depends_on:
       - mariadb
-    ports:
-      - "8003:8000"
     environment:
       DB_HOST: mariadb
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: ${PAYMENT_DB}
     networks:
-      - monitoring
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payment.rule=PathPrefix(`/payment`)"
+      - "traefik.http.services.payment.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.payment-stripprefix.stripprefix.prefixes=/payment"
+      - "traefik.http.routers.payment.middlewares=payment-stripprefix@docker"
+
   shop:
     build: ./shop
     container_name: shop
@@ -70,10 +81,16 @@ services:
     ports:
       - "8004:8000"
     networks:
-      - monitoring
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shop.rule=PathPrefix(`/shop`)"
+      - "traefik.http.services.shop.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.shop-stripprefix.stripprefix.prefixes=/shop"
+      - "traefik.http.routers.shop.middlewares=shop-stripprefix@docker"
 
 networks:
-  monitoring:
+  app:
     external: true # Von Terraform erzeugt, für Monitoring/Tracing
 
 volumes:

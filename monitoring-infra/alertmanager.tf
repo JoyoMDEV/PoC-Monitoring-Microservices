@@ -9,12 +9,7 @@ resource "docker_container" "alertmanager" {
   networks_advanced {
     name = docker_network.monitoring.name
   }
-
-  ports {
-    internal = var.alertmanager_port
-    external = var.alertmanager_port
-  }
-
+  
   volumes {
     host_path      = abspath("${path.module}/${var.alertmanager_config_path}")
     container_path = "/etc/alertmanager/alertmanager.yml"

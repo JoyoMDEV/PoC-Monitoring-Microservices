@@ -101,7 +101,7 @@ def setup_tracing():
     provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "payment-service"}))
     trace.set_tracer_provider(provider)
     otlp_exporter = OTLPSpanExporter(
-        endpoint="jaeger:4317",
+        endpoint="traefik:4317",
         insecure=True
     )
     span_processor = BatchSpanProcessor(otlp_exporter)
