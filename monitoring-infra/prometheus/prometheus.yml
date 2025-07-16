@@ -14,14 +14,25 @@ scrape_configs:
     static_configs:
       - targets: ['prometheus:9090']
 
-  - job_name: 'microservices'
+  - job_name: 'product'
+    metrics_path: /product/metrics
     static_configs:
-      - targets: [
-          'traefik:80/product/metrics',
-          'traefik:80/order/metrics',
-          'traefik:80/payment/metrics',
-          'traefik:80/shop/metrics'
-        ]
+      - targets: ['traefik:80']
+
+  - job_name: 'order'
+    metrics_path: /order/metrics
+    static_configs:
+      - targets: ['traefik:80']
+
+  - job_name: 'payment'
+    metrics_path: /payment/metrics
+    static_configs:
+      - targets: ['traefik:80']
+
+  - job_name: 'shop'
+    metrics_path: /shop/metrics
+    static_configs:
+      - targets: ['traefik:80']
 
 alerting:
   alertmanagers:
