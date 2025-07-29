@@ -91,7 +91,7 @@ services:
 
 networks:
   app:
-    external: true # Von Terraform erzeugt, für Monitoring/Tracing
+    external: true # Von Terraform erzeugt, für Microservices
 
 volumes:
   mariadb_data:
