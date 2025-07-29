@@ -1,5 +1,5 @@
 MONITORING_INFRA=monitoring-infra
-SERVICES_DIR_PYTHON=python
+SERVICES_DIR=python
 
 .PHONY: all infra services up down logs clean status test
 
@@ -11,7 +11,7 @@ infra:
 python_services:
 	cd $(SERVICES_DIR) && docker compose up --build -d
 
-python_up: infra services
+python_up: infra python_services
 
 python_down:
 	cd $(SERVICES_DIR) && docker compose down

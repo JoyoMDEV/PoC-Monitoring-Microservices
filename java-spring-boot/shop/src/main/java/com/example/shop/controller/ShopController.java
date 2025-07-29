@@ -28,17 +28,18 @@ public class ShopController {
         try {
             // 0. Validierung
             try {
-                if (req.getProductId() == null){
+                if (req.getProductId() == null) {
                     return ResponseEntity.badRequest().body(Map.of("error", "Product ID is required"));
                 }
-                if (req.getQuantity() <= 0){
+                if (req.getQuantity() <= 0) {
                     return ResponseEntity.badRequest().body(Map.of("error", "Quantity must be greater than 0"));
                 }
+            } finally {
             }
             // 1. Produktdaten holen
             ProductDto product = productClient.getProduct(req.getProductId());
             if (product == null) {
-                return ResponseEntity.status(404).body(Map.of("error", "Prddduct not found"))
+                return ResponseEntity.status(404).body(Map.of("error", "Prddduct not found"));
             }
             double totalPrice = product.getPrice() * req.getQuantity();
 
@@ -61,8 +62,7 @@ public class ShopController {
             return ResponseEntity.ok(Map.of(
                     "order", order,
                     "payment", payment,
-                    "product", product
-            ));
+                    "product", product));
         } catch (Exception e) {
             logger.error("shop_purchase_failed", e);
             return ResponseEntity.status(500).body(Map.of("error", "Shop purchase failed"));
