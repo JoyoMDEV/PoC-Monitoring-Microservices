@@ -1,0 +1,99 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${PRODUCT_DB}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d
+    networks:
+      - app
+
+  product:
+    build: ./product
+    container_name: product
+    depends_on:
+      - mariadb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/${PRODUCT_DB}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.product.rule=PathPrefix(`/product`)"
+      - "traefik.http.services.product.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.product-stripprefix.stripprefix.prefixes=/product"
+      - "traefik.http.routers.product.middlewares=product-stripprefix@docker"
+
+  order:
+    build: ./order
+    container_name: order
+    depends_on:
+      - mariadb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/${ORDER_DB}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order.rule=PathPrefix(`/order`)"
+      - "traefik.http.services.order.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.order-stripprefix.stripprefix.prefixes=/order"
+      - "traefik.http.routers.order.middlewares=order-stripprefix@docker"
+
+  payment:
+    build: ./payment
+    container_name: payment
+    depends_on:
+      - mariadb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/${PAYMENT_DB}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payment.rule=PathPrefix(`/payment`)"
+      - "traefik.http.services.payment.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.payment-stripprefix.stripprefix.prefixes=/payment"
+      - "traefik.http.routers.payment.middlewares=payment-stripprefix@docker"
+
+  shop:
+    build: ./shop
+    container_name: shop
+    depends_on:
+      - product
+      - order
+      - payment
+    environment:
+      PRODUCT_SERVICE_URL: http://product:8080
+      ORDER_SERVICE_URL: http://order:8080
+      PAYMENT_SERVICE_URL: http://payment:8080
+      # ggf. noch DB-Config falls der Shop-Service doch eine eigene DB braucht (sonst einfach weglassen)
+    networks:
+      - app
+    ports:
+      - "8004:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shop.rule=PathPrefix(`/shop`)"
+      - "traefik.http.services.shop.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.shop-stripprefix.stripprefix.prefixes=/shop"
+      - "traefik.http.routers.shop.middlewares=shop-stripprefix@docker"
+
+networks:
+  app:
+    external: true
+
+volumes:
+  mariadb_data:
