@@ -1,0 +1,43 @@
+name: Java Build & Deploy & Smoke-Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_USER: ${{ secrets.MYSQL_USER }}
+  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  PRODUCT_DB: ${{ secrets.PRODUCT_DB }}
+  PAYMENT_DB: ${{ secrets.PAYMENT_DB }}
+  ORDER_DB: ${{ secrets.ORDER_DB }}
+
+jobs:
+  build-deploy-java:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+        # Java-Setup falls Tests geplant (optional, z.B. mit Maven oder Gradle)
+        # - name: Setup Java
+        #   uses: actions/setup-java@v4
+        #   with:
+        #     distribution: 'temurin'
+        #     java-version: '17'
+
+      - name: Provision Monitoring Infra (Terraform)
+        run: make infra
+
+      - name: Build & Deploy Java Services (Docker Compose)
+        run: make java_services
+
+        # Hier könntest du analog wie bei Python weitere Tests/Status/Logs einbinden
+        # - name: Status
+        #   run: make java_status

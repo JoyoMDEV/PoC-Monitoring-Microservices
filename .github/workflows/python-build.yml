@@ -1,0 +1,50 @@
+name: Python Build & Deploy & Smoke-Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_USER: ${{ secrets.MYSQL_USER }}
+  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  PRODUCT_DB: ${{ secrets.PRODUCT_DB }}
+  PAYMENT_DB: ${{ secrets.PAYMENT_DB }}
+  ORDER_DB: ${{ secrets.ORDER_DB }}
+
+jobs:
+  build-deploy-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      #   - name: Setup Python
+      #     uses: actions/setup-python@v5
+      #     with:
+      #       python-version: "3.11"
+
+      #   - name: Install pytest
+      #     run: python -m pip install --upgrade pip pytest
+
+      - name: Provision Monitoring Infra (Terraform)
+        run: make infra
+
+      - name: Build & Deploy Python Services (Docker Compose)
+        run: make python_services
+
+      #   - name: Smoke Test
+      #     run: python_test
+
+      - name: Show Service Status
+        run: make python_status
+
+      - name: Cleanup
+        if: always()
+        run: make python_down
