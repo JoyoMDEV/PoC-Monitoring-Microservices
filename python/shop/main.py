@@ -40,7 +40,7 @@ async def products(
             product = prod_resp.json()
             logger.info("product_created", product_id=product["id"])
         return {
-            id: product["id"]
+            "id": product["id"]
         }
     except Exception as e:
         logger.error("product_creation_failed", error=str(e))
