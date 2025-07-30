@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.shop.dto.ProductDto;
+import com.example.shop.dto.ProductCreateRequest;
 
 @FeignClient(name = "product", url = "${product.service.url}")
 public interface ProductClient {
@@ -11,5 +12,5 @@ public interface ProductClient {
     ProductDto getProduct(@PathVariable("id") Long id);
 
     @PostMapping("/products")
-    ProductDto createProduct(@PathVariable("name") String name, @PathVariable("price") Double price);
+    ProductDto createProduct(@RequestBody ProductCreateRequest dto);
 }

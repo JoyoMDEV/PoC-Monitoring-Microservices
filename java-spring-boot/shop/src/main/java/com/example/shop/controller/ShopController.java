@@ -26,7 +26,7 @@ public class ShopController {
     @PostMapping("/products")
     public ResponseEntity<?> create_product(@RequestBody ProductCreateRequest req) {
         try {
-            ProductDto product = productClient.createProduct(req.getName(), req.getPrice());
+            ProductDto product = productClient.createProduct(req);
             if (product == null) {
                 logger.error("Product Creation failed");
                 return ResponseEntity.status(404).body(Map.of("error", "Product Creation failed"));
