@@ -1,0 +1,38 @@
+name: Java Build & Deploy & Smoke-Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-deploy-java:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Install Docker Compose
+        run: sudo apt-get update && sudo apt-get install -y docker-compose-plugin
+
+        # Java-Setup falls Tests geplant (optional, z.B. mit Maven oder Gradle)
+        # - name: Setup Java
+        #   uses: actions/setup-java@v4
+        #   with:
+        #     distribution: 'temurin'
+        #     java-version: '17'
+
+      - name: Provision Monitoring Infra (Terraform)
+        run: make infra
+
+      - name: Build & Deploy Java Services (Docker Compose)
+        run: make java_services
+
+        # Hier könntest du analog wie bei Python weitere Tests/Status/Logs einbinden
+        # - name: Status
+        #   run: make java_status
