@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_USER: ${{ secrets.MYSQL_USER }}
+  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  PRODUCT_DB: ${{ secrets.PRODUCT_DB }}
+  PAYMENT_DB: ${{ secrets.PAYMENT_DB }}
+  ORDER_DB: ${{ secrets.ORDER_DB }}
+
 jobs:
   build-deploy-java:
     runs-on: ubuntu-latest
@@ -16,9 +24,6 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
-      - name: Install Docker Compose
-        run: sudo apt-get update && sudo apt-get install -y docker-compose-plugin
 
         # Java-Setup falls Tests geplant (optional, z.B. mit Maven oder Gradle)
         # - name: Setup Java
