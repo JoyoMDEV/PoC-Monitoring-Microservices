@@ -23,6 +23,24 @@ public class ShopController {
     private final PaymentClient paymentClient;
     private static final Logger logger = LoggerFactory.getLogger(ShopController.class);
 
+    @PostMapping("/products")
+    public ResponseEntity<?> create_product(@RequestBody ProductCreateRequest req) {
+        try {
+            ProductDto product = productClient.createProduct(req.getName(), req.getPrice());
+            if (product == null) {
+                logger.error("Product Creation failed");
+                return ResponseEntity.status(404).body(Map.of("error", "Product Creation failed"));
+            }
+            Long product_id = product.getId();
+            logger.info("Created Product", product);
+            return ResponseEntity.ok(Map.of(
+                    "id", product_id));
+        } catch (Exception e) {
+            logger.error("shop_purchase_failed", e);
+            return ResponseEntity.status(500).body(Map.of("error", "Shop purchase failed"));
+        }
+    }
+
     @PostMapping("/purchase")
     public ResponseEntity<?> purchase(@RequestBody ShopPurchaseRequest req) {
         try {

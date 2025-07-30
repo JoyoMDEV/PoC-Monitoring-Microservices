@@ -25,7 +25,7 @@ def read_root():
     logger.info("root_called")
     return {"message": "Shop Gateway online"}
 
-@app.post("/products")
+@app.post("/shop/products")
 async def products(
     name: str = Body(...),
     price: float = Body(...)

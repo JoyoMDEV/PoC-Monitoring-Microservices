@@ -9,4 +9,7 @@ import com.example.shop.dto.ProductDto;
 public interface ProductClient {
     @GetMapping("/products/{id}")
     ProductDto getProduct(@PathVariable("id") Long id);
+
+    @PostMapping("/products")
+    ProductDto createProduct(@PathVariable("name") String name, @PathVariable("price") Double price);
 }
