@@ -9,7 +9,7 @@ PAYMENT_METHOD="credit_card"
 
 # --- 1. Produkt im Product-Service anlegen ---
 echo "Lege Produkt an..."
-CREATE_PRODUCT_RESPONSE=$(curl -s -X POST http://localhost:8001/products \
+CREATE_PRODUCT_RESPONSE=$(curl -s -X POST http://localhost:8004/shop/products \
   -H "Content-Type: application/json" \
   -d "{\"name\": \"$PRODUCT_NAME\", \"price\": $PRODUCT_PRICE}")
 

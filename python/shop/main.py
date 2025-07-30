@@ -25,6 +25,27 @@ def read_root():
     logger.info("root_called")
     return {"message": "Shop Gateway online"}
 
+@app.post("/shop/products")
+async def products(
+    name: str = Body(...),
+    price: float = Body(...)
+):
+    try:
+        async with httpx.AsyncClient() as client:
+            prod_data = {
+                "name": name,
+                "price": price
+            }
+            prod_resp = await client.post("http://product:8000/products", json=prod_data)
+            product = prod_resp.json()
+            logger.info("product_created", product_id=product["id"])
+        return {
+            "id": product["id"]
+        }
+    except Exception as e:
+        logger.error("product_creation_failed", error=str(e))
+        raise HTTPException(status_code=500, detail="Product Creation failed")
+
 @app.post("/shop/purchase")
 async def shop_purchase(
     product_id: int = Body(...),
